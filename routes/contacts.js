@@ -1,4 +1,3 @@
-// 📁 routes/contacts.js
 const express = require("express");
 const {
     listContacts,
@@ -11,7 +10,6 @@ const {
 
 const router = express.Router();
 
-// GET /api/contacts
 router.get("/", async (req, res, next) => {
     try {
         const contacts = await listContacts();
@@ -21,7 +19,6 @@ router.get("/", async (req, res, next) => {
     }
 });
 
-// GET /api/contacts/:id
 router.get("/:id", async (req, res, next) => {
     try {
         const contact = await getContactById(req.params.id);
@@ -32,7 +29,6 @@ router.get("/:id", async (req, res, next) => {
     }
 });
 
-// POST /api/contacts
 router.post("/", async (req, res, next) => {
     try {
         const { name, email, phone } = req.body;
@@ -48,7 +44,6 @@ router.post("/", async (req, res, next) => {
     }
 });
 
-// DELETE /api/contacts/:id
 router.delete("/:id", async (req, res, next) => {
     try {
         const contact = await removeContact(req.params.id);
@@ -59,7 +54,6 @@ router.delete("/:id", async (req, res, next) => {
     }
 });
 
-// PUT /api/contacts/:id
 router.put("/:id", async (req, res, next) => {
     try {
         if (Object.keys(req.body).length === 0) {
@@ -74,7 +68,6 @@ router.put("/:id", async (req, res, next) => {
     }
 });
 
-// PATCH /api/contacts/:id/favorite
 router.patch("/:id/favorite", async (req, res, next) => {
     try {
         const { favorite } = req.body;

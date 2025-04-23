@@ -8,7 +8,6 @@ const {
 
 const HttpError = require("../helpers/HttpError");
 
-// Отримати весь список контактів (GET /api/contacts)
 const getAllContacts = async (req, res, next) => {
     try {
         const contacts = await listContacts();
@@ -18,7 +17,6 @@ const getAllContacts = async (req, res, next) => {
     }
 };
 
-// Отримати контакт за id (GET /api/contacts/:id)
 const getContact = async (req, res, next) => {
     try {
         const { id } = req.params;
@@ -32,7 +30,6 @@ const getContact = async (req, res, next) => {
     }
 };
 
-// Додати новий контакт (POST /api/contacts)
 const addContactHandler = async (req, res, next) => {
     try {
         // Якщо дійшли сюди – body вже провалідований мідлварою
@@ -43,7 +40,6 @@ const addContactHandler = async (req, res, next) => {
     }
 };
 
-// Видалити контакт за id (DELETE /api/contacts/:id)
 const deleteContact = async (req, res, next) => {
     try {
         const { id } = req.params;
@@ -57,7 +53,6 @@ const deleteContact = async (req, res, next) => {
     }
 };
 
-// Оновити контакт за id (PUT /api/contacts/:id)
 const updateContactHandler = async (req, res, next) => {
     try {
         const { id } = req.params;
