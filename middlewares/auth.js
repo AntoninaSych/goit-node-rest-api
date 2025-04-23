@@ -26,4 +26,4 @@ const auth = async (req, res, next) => {
     }
 };
 
-module.exports = auth; // ✅ а не { auth }
+module.exports = auth;

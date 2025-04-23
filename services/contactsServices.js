@@ -1,7 +1,18 @@
 const Contact = require("../models/contact");
 
-const listContacts = async (ownerId) => {
-    return await Contact.findAll({ where: { owner: ownerId } });
+const listContacts = async (ownerId, { page = 1, limit = 20, favorite } = {}) => {
+    const offset = (page - 1) * limit;
+    const where = { owner: ownerId };
+
+    if (favorite !== undefined) {
+        where.favorite = favorite === "true";
+    }
+
+    return await Contact.findAll({
+        where,
+        limit: parseInt(limit),
+        offset: parseInt(offset),
+    });
 };
 
 const getContactById = async (id, ownerId) => {

@@ -10,21 +10,18 @@ const { connectDB } = require("./db/sequelize");
 
 const app = express();
 
-// Middleware first
 app.use(logger("dev"));
 app.use(cors());
 app.use(express.json());
 
-// Routes
+
 app.use("/api/auth", authRouter);
 app.use("/api/contacts", contactsRouter);
 
-// 404 handler
 app.use((req, res, next) => {
     next(HttpError(404, "Not found"));
 });
 
-// Global error handler
 app.use((error, req, res, next) => {
     const { status = 500, message = "Server error" } = error;
     res.status(status).json({ message });

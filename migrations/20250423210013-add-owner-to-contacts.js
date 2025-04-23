@@ -4,7 +4,7 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.addColumn('contacts', 'owner', {
       type: Sequelize.INTEGER,
-      allowNull: true  // временно допускаем null
+      allowNull: true
     });
 
     await queryInterface.changeColumn('contacts', 'owner', {
