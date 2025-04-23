@@ -1,39 +1,90 @@
-const express = require('express');
+// 📁 routes/contacts.js
+const express = require("express");
 const {
     listContacts,
     getContactById,
     addContact,
     removeContact,
     updateContact,
-    updateStatusContact,
-} = require('../services/contactsServices');
+    updateStatusContact
+} = require("../services/contactsServices");
 
 const router = express.Router();
 
+// GET /api/contacts
+router.get("/", async (req, res, next) => {
+    try {
+        const contacts = await listContacts();
+        res.json(contacts);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// GET /api/contacts/:id
+router.get("/:id", async (req, res, next) => {
+    try {
+        const contact = await getContactById(req.params.id);
+        if (!contact) return res.status(404).json({ message: "Not found" });
+        res.json(contact);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// POST /api/contacts
+router.post("/", async (req, res, next) => {
+    try {
+        const { name, email, phone } = req.body;
+
+        if (!name || !email || !phone) {
+            return res.status(400).json({ message: "Missing required fields" });
+        }
+
+        const newContact = await addContact({ name, email, phone });
+        res.status(201).json(newContact);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// DELETE /api/contacts/:id
+router.delete("/:id", async (req, res, next) => {
+    try {
+        const contact = await removeContact(req.params.id);
+        if (!contact) return res.status(404).json({ message: "Not found" });
+        res.json(contact);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// PUT /api/contacts/:id
+router.put("/:id", async (req, res, next) => {
+    try {
+        if (Object.keys(req.body).length === 0) {
+            return res.status(400).json({ message: "Body must have at least one field" });
+        }
+
+        const contact = await updateContact(req.params.id, req.body);
+        if (!contact) return res.status(404).json({ message: "Not found" });
+        res.json(contact);
+    } catch (error) {
+        next(error);
+    }
+});
+
 // PATCH /api/contacts/:id/favorite
-router.patch('/:id/favorite', async (req, res, next) => {
+router.patch("/:id/favorite", async (req, res, next) => {
     try {
         const { favorite } = req.body;
-
-        // 1. Перевірка: чи передано поле favorite
-        if (favorite === undefined) {
-            return res.status(400).json({ message: 'Missing field favorite' });
+        if (typeof favorite !== "boolean") {
+            return res.status(400).json({ message: "Missing field favorite" });
         }
 
-        // 2. Валідація типу (true/false)
-        if (typeof favorite !== 'boolean') {
-            return res.status(400).json({ message: 'Field favorite must be boolean' });
-        }
-
-        // 3. Оновлення
         const contact = await updateStatusContact(req.params.id, { favorite });
-
-        // 4. Обробка "не знайдено"
-        if (!contact) {
-            return res.status(404).json({ message: 'Not found' });
-        }
-
-        res.status(200).json(contact);
+        if (!contact) return res.status(404).json({ message: "Not found" });
+        res.json(contact);
     } catch (error) {
         next(error);
     }

@@ -1,4 +1,8 @@
-const Contact = require('../models/contact');
+const Contact = require("../models/contact");
+
+const addContact = async ({ name, email, phone }) => {
+    return await Contact.create({ name, email, phone });
+};
 
 const listContacts = async () => {
     return await Contact.findAll();
@@ -15,9 +19,7 @@ const removeContact = async (id) => {
     return contact;
 };
 
-const addContact = async ({ name, email, phone }) => {
-    return await Contact.create({ name, email, phone });
-};
+
 
 const updateContact = async (id, data) => {
     const contact = await getContactById(id);
