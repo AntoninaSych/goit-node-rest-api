@@ -1,57 +1,37 @@
-const fs = require("fs/promises");
-const path = require("path");
-const { nanoid } = require("nanoid");
+const Contact = require('../models/contact');
 
-const contactsPath = path.join(__dirname, "..", "db", "contacts.json");
+const listContacts = async () => {
+    return await Contact.findAll();
+};
 
-async function listContacts() {
-    const data = await fs.readFile(contactsPath, "utf8");
-    return JSON.parse(data);
-}
+const getContactById = async (id) => {
+    return await Contact.findByPk(id);
+};
 
-async function getContactById(contactId) {
-    const contacts = await listContacts();
-    const foundContact = contacts.find((contact) => contact.id === contactId);
-    return foundContact || null;
-}
+const removeContact = async (id) => {
+    const contact = await getContactById(id);
+    if (!contact) return null;
+    await contact.destroy();
+    return contact;
+};
 
-async function removeContact(contactId) {
-    const contacts = await listContacts();
-    const index = contacts.findIndex((contact) => contact.id === contactId);
-    if (index === -1) {
-        return null;
-    }
-    const [removedContact] = contacts.splice(index, 1);
-    await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2), "utf8");
-    return removedContact;
-}
+const addContact = async ({ name, email, phone }) => {
+    return await Contact.create({ name, email, phone });
+};
 
-// Для створення нового контакту. У body можна передавати { name, email, phone }.
-async function addContact({ name, email, phone }) {
-    const contacts = await listContacts();
-    const newContact = {
-        id: nanoid(),
-        name,
-        email,
-        phone,
-    };
-    contacts.push(newContact);
-    await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2), "utf8");
-    return newContact;
-}
+const updateContact = async (id, data) => {
+    const contact = await getContactById(id);
+    if (!contact) return null;
+    await contact.update(data);
+    return contact;
+};
 
-// Оновлення контакту за ID. У body можуть бути будь-які поля: name, email, phone.
-async function updateContact(contactId, body) {
-    const contacts = await listContacts();
-    const index = contacts.findIndex((contact) => contact.id === contactId);
-    if (index === -1) {
-        return null;
-    }
-    // Перезаписуємо частково поля (ті, що прийшли з body, оновлюємо)
-    contacts[index] = { ...contacts[index], ...body };
-    await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2), "utf8");
-    return contacts[index];
-}
+const updateStatusContact = async (id, { favorite }) => {
+    const contact = await getContactById(id);
+    if (!contact) return null;
+    await contact.update({ favorite });
+    return contact;
+};
 
 module.exports = {
     listContacts,
@@ -59,4 +39,5 @@ module.exports = {
     removeContact,
     addContact,
     updateContact,
+    updateStatusContact,
 };
