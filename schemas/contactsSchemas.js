@@ -1,6 +1,5 @@
 const Joi = require("joi");
 
-// Схема для створення нового контакту (POST)
 const addContactSchema = Joi.object({
     name: Joi.string().required().messages({
         "any.required": `"name" is required`,
@@ -13,7 +12,6 @@ const addContactSchema = Joi.object({
     }),
 });
 
-// Схема для оновлення (PUT) – принаймні одне з полів має бути
 const updateContactSchema = Joi.object({
     name: Joi.string(),
     email: Joi.string(),
