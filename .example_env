@@ -4,3 +4,6 @@ DB_NAME=
 DB_USER=
 DB_PASSWORD=
 JWT_SECRET=
+BASE_URL=http://localhost:3000
+UKR_USER=your@ukr.net
+UKR_PASS=yourpassword
