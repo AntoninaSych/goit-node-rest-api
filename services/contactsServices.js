@@ -1,35 +1,44 @@
 const Contact = require("../models/contact");
 
-const addContact = async ({ name, email, phone }) => {
-    return await Contact.create({ name, email, phone });
+const listContacts = async (ownerId, { page = 1, limit = 20, favorite } = {}) => {
+    const offset = (page - 1) * limit;
+    const where = { owner: ownerId };
+
+    if (favorite !== undefined) {
+        where.favorite = favorite === "true";
+    }
+
+    return await Contact.findAll({
+        where,
+        limit: parseInt(limit),
+        offset: parseInt(offset),
+    });
 };
 
-const listContacts = async () => {
-    return await Contact.findAll();
+const getContactById = async (id, ownerId) => {
+    return await Contact.findOne({ where: { id, owner: ownerId } });
 };
 
-const getContactById = async (id) => {
-    return await Contact.findByPk(id);
+const addContact = async ({ name, email, phone, owner }) => {
+    return await Contact.create({ name, email, phone, owner });
 };
 
-const removeContact = async (id) => {
-    const contact = await getContactById(id);
+const removeContact = async (id, ownerId) => {
+    const contact = await getContactById(id, ownerId);
     if (!contact) return null;
     await contact.destroy();
     return contact;
 };
 
-
-
-const updateContact = async (id, data) => {
-    const contact = await getContactById(id);
+const updateContact = async (id, data, ownerId) => {
+    const contact = await getContactById(id, ownerId);
     if (!contact) return null;
     await contact.update(data);
     return contact;
 };
 
-const updateStatusContact = async (id, { favorite }) => {
-    const contact = await getContactById(id);
+const updateStatusContact = async (id, { favorite }, ownerId) => {
+    const contact = await getContactById(id, ownerId);
     if (!contact) return null;
     await contact.update({ favorite });
     return contact;
